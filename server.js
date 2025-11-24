@@ -8,20 +8,20 @@ connectDB();
 
 const app = express();
 
-// ⭐ CORS (NO app.options required)
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://infinahub.netlify.app"
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+// ⭐ SAFE CORS
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://infinahub.netlify.app"
+    ],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
-// ROUTES
+// ---------------- ROUTES ----------------
 import authRoutes from "./routes/authRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import developerRoute from "./routes/developerRoutes.js";
@@ -42,7 +42,9 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/search", searchRoutes);
 
+// ⭐ DO NOT USE HOST — Render will break
 const port = process.env.PORT || 5000;
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
