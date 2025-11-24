@@ -8,19 +8,16 @@ connectDB();
 
 const app = express();
 
-// ⭐ CORS FIX
+// ⭐ CORS (NO app.options required)
 app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://infinahub.netlify.app"
   ],
+  credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
-// ⭐ PRE-FLIGHT FIX (NO "*" ALLOWED!)
-app.options("/api/*", cors());
 
 app.use(express.json());
 
