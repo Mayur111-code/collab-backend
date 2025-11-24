@@ -11,9 +11,13 @@ const app = express();
 
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://your-frontend-site.com"],
+  origin: [
+    "http://localhost:5173",
+    "https://infinahub.netlify.app"   // ⭐ your live frontend URL
+  ],
   credentials: true
 }));
+
 
 app.use(express.json());
 
