@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Allowed origins
 const allowedOrigins = [
-  "https://collab-social-media-app.vercel.app",
+  "https://infinahub.vercel.app",
   "http://localhost:5173",
 ];
 
