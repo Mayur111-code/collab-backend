@@ -1,29 +1,68 @@
 import express from "express";
-import upload from "../middleware/upload.js";
-import { v2 as cloudinary } from "cloudinary";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import cloudinary from "./config/cloudinary.js";   
 
-const router = express.Router();
+dotenv.config();
+connectDB();
 
-router.post("/file", upload.single("file"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+const app = express();
 
-  const buffer = req.file.buffer;
+const allowedOrigins = [
+  "https://collab-social-media-app.vercel.app",
+  "http://localhost:5173"
+];
 
-  const stream = cloudinary.uploader.upload_stream(
-    {
-      folder: "collab-project",
-    },
-    (error, result) => {
-      if (error) {
-        console.error("Cloudinary error:", error);
-        return res.status(500).json({ error: "Upload failed" });
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS Blocked"));
       }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
-      res.json({ url: result.secure_url });
-    }
-  );
+// Preflight fix for file upload
+app.options("/api/upload/file", cors());
 
-  stream.end(buffer);
+app.use(express.json());
+
+// Routes
+import authRoutes from "./routes/authRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+import developerRoute from "./routes/developerRoutes.js";
+import collabRoutes from "./routes/collabRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import searchRoutes from "./routes/searchRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
+app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/developers", developerRoute);
+app.use("/api/collab", collabRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/user", userRoutes);
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Collab API Server Running",
+    version: "1.0.0",
+    frontend: "https://collab-social-media-app.vercel.app",
+  });
 });
 
-export default router;
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`🚀 Server running on port ${port}`);
+});
