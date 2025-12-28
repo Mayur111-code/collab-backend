@@ -11,6 +11,7 @@ const app = express();
 
 const allowedOrigins = [
   "https://infinahub.vercel.app",
+  "https://frontend-eta-five-33.vercel.app",
   "http://localhost:5173"
 ];
 
